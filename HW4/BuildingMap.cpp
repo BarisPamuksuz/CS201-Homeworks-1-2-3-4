@@ -133,9 +133,7 @@ LinkedStack<Cubicle*> deepCopyStack(LinkedStack<Cubicle*>& original) {
     }
     return newStack;
 }
-//Logic: First find a path, pop one by one until finding another or stack's empty. Each popping makes that cubicle sets to notVisited but departed cubicle has no access popped one for that time, so that another path can be found from indirect access if there is.
-// The popped cubicle has been freed by deleting visited cubicle list to ensure that far cubicle can access same cubicle if there is at least one gap(far cubicle), so that different paths still holds same parts of previous paths but not all. i.e. assuming path 1->3->5->7 
-// if 3->9->5 possible and when 5 pops, 3->5 is not possible due to 3's visitedList but 5 is available since popped set to isVisited = false, stack finds 3->9->5 path and since 5's visitedList is released, 5->7 possible. New path is found: 1->3->9->5->7. I use DFS.
+
 void BuildingMap::findPaths(const int startRow, const int startCol, const int endRow, const int endCol) {
     cout << "Paths from (" << startRow << "," << startCol << ") to (" << endRow << "," << endCol << ") are: " << endl;
     LinkedStack<Cubicle*> stackToDisplay;
@@ -153,20 +151,15 @@ void BuildingMap::findPaths(const int startRow, const int startCol, const int en
     starterCubicle->isVisited = true;
     Cubicle* topCubicle = stack.peek();
     while (!stack.isEmpty() && &*topCubicle != &*endCubicle) {
-        //cout<<topCubicle->rowNum<<" "<<topCubicle->columnNum<<endl;--DEBUG STATEMENT--
-        //cout<<"I was here: "<<"("<<stack.peek()->rowNum<<","<<stack.peek()->columnNum<<") ";
         Cubicle* anAdjacent = getAnAdjacentCubicle(topCubicle);
         
         if (anAdjacent == nullptr) {
-            //cout<<"I dont have adjacent cubicle"<<endl;
             topCubicle->isVisited = false;
             topCubicle->clearVisitedCubicles();
             stack.pop();
         } else {
-            //cout<<"My adjacent cubicle is "<<"("<<anAdjacent->rowNum<<","<<anAdjacent->columnNum<<")"<<endl;
             topCubicle->addVisitedCubicle(*anAdjacent);
             stack.push(anAdjacent);
-            //cout<<"I travelled there: "<<"("<<anAdjacent->rowNum<<","<<anAdjacent->columnNum<<")"<<endl;
             anAdjacent->isVisited = true;
         }
         if(!stack.isEmpty()){
@@ -240,20 +233,16 @@ void BuildingMap::findPaths(const int startRow, const int startCol, const int en
     starterCubicle->isVisited = true;
     Cubicle* topCubicle = stack.peek();
     while (!stack.isEmpty() && &*topCubicle != &*endCubicle) {
-        //cout<<topCubicle->rowNum<<" "<<topCubicle->columnNum<<endl;--DEBUG STATEMENT--
-        //cout<<"I was here: "<<"("<<stack.peek()->rowNum<<","<<stack.peek()->columnNum<<") ";
         Cubicle* anAdjacent = getAnAdjacentCubicle(topCubicle);
         
         if (anAdjacent == nullptr) {
-            //cout<<"I dont have adjacent cubicle"<<endl;
             topCubicle->isVisited = false;
             topCubicle->clearVisitedCubicles();
             stack.pop();
         } else {
-            //cout<<"My adjacent cubicle is "<<"("<<anAdjacent->rowNum<<","<<anAdjacent->columnNum<<")"<<endl;
+            
             topCubicle->addVisitedCubicle(*anAdjacent);
             stack.push(anAdjacent);
-            //cout<<"I travelled there: "<<"("<<anAdjacent->rowNum<<","<<anAdjacent->columnNum<<")"<<endl;
             anAdjacent->isVisited = true;
         }
         if(!stack.isEmpty()){
@@ -297,26 +286,4 @@ void BuildingMap::displayAllCubicles() const{
             cout<<"("<<allCubicles[i*columns+k].rowNum<<","<<allCubicles[i*columns+k].columnNum<<")"<<",";}
         }
     }
-}
-int main() {
-BuildingMap bm("building.txt");
-cout << endl;
-bm.displayAllCubicles();
-cout << endl;
-bm.displayAdjacentCubicles(1,1);
-cout << endl;
-bm.displayAdjacentCubicles(2,2);
-cout << endl;
-bm.displayAdjacentCubicles(3,5);
-cout << endl;
-bm.displayBuildingMap();
-cout << endl;
-bm.findPaths(0,0,4,0);
-cout << endl;
-bm.findPaths(0,0,4,0,1,3);
-cout << endl;
-bm.findPaths(0,0,4,0,2,1);
-cout << endl;
-bm.findPaths(3,1,2,4);
-return 0;
 }
